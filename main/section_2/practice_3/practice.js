@@ -1,53 +1,40 @@
 function count_same_elements(collection) {
-  var result = [];
-  var item = {};
-
-  for (var i = 0, len = collection.length; i < len; i++) {
-    if (item[collection[i]]) {
-      item[collection[i]] += 1;
+  var result = collection.reduce(function (counted, currStr) {
+    var nameArray = counted.map(function (element) {
+      return element.name;
+    })
+    var currVal = currStr.match(/[a-z]/).toString();
+    if (!nameArray.includes(currVal)) {
+      createNewObj(counted, currStr);
     } else {
-      item[collection[i]] = 1;
+      increaseCount(counted, currStr);
     }
+    return counted;
+  }, []);
+  return result;
+}
+
+function createNewObj(array, item) {
+  var newObj = {};
+  newObj.name = item.match(/[a-z]/).toString();
+  if (item.match(/\d/)) {
+    newObj.summary = parseInt(item.match(/\d/));
+  } else {
+    newObj.summary = 1;
   }
-  console.log(item);
-  let strRegexp = /[a-z]/g;
-  let numRegexp = /[0-9]+/g;
+  return array.push(newObj);
+}
 
-  for (let key in item) {
-    if (key.length > 1) {
-      let getKey = key.match(strRegexp)[0];
-      // console.log(typeof getKey);
-      let getNum = parseInt(key.match(numRegexp)[0]);
-      // console.log(getNum);
-      delete item[key];
-
-      if (getKey in item) {
-        item[getKey] += getNum;
+function increaseCount(arr, item) {
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].name === item.match(/[a-z]/).toString()) {
+      if (item.match(/\d/)) {
+        arr[i].summary += parseInt(item.match(/\d+/));
       } else {
-        item[getKey] = getNum;
+        arr[i].summary++;
       }
     }
   }
-  // console.log(item);
-
-  for (var key in item) {
-    result.push({"name": key, "summary": item[key]});
-  }
-  // return result;
-  console.log(result);
+  return arr;
 }
-
-
-var collection = [
-  "a", "a", "a",
-  "e", "e", "e", "e", "e", "e", "e",
-  "h", "h", "h", "h", "h", "h", "h[3]", "h", "h",
-  "t", "t-2", "t", "t", "t", "t", "t", "t", "t[10]",
-  "f", "f", "f", "f", "f", "f", "f", "f", "f",
-  "c:8",
-  "g", "g", "g", "g", "g", "g", "g",
-  "b", "b", "b", "b", "b", "b",
-  "d-5"
-];
-count_same_elements(collection);
 module.exports = count_same_elements;
